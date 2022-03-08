@@ -4,6 +4,7 @@ import { removeItem } from "../../store/actions/cartActions";
 import React from "react";
 import Colors from "../../constants/Colors";
 import CartItem from "../../components/shop/CartItem";
+import { addOrder } from "../../store/actions/orderActions";
 
 const CartScreen = (props) => {
   const cartTotalAmount = useSelector((state) => state.cart.totalAmount);
@@ -29,7 +30,13 @@ const CartScreen = (props) => {
           Total:
           <Text style={styles.amount}>${cartTotalAmount.toFixed(2)}</Text>
         </Text>
-        <Button title="Order Now" disabled={cartItems.length === 0} />
+        <Button
+          title="Order Now"
+          disabled={cartItems.length === 0}
+          onPress={() => {
+            dispatch(addOrder(cartItems, cartTotalAmount));
+          }}
+        />
       </View>
       <View>
         <Text>Cart Items: </Text>
@@ -42,6 +49,7 @@ const CartScreen = (props) => {
             quantity={itemData.item.quantity}
             title={itemData.item.productTitle}
             amount={itemData.item.sum}
+            deletable
             onRemove={() => {
               dispatch(
                 removeItem(
@@ -57,7 +65,9 @@ const CartScreen = (props) => {
     </View>
   );
 };
-
+CartScreen.navigationOptions = {
+  headerTitle: "Your cart",
+};
 export default CartScreen;
 
 const styles = StyleSheet.create({

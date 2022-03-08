@@ -1,5 +1,7 @@
 import { ADD_TO_CART, REMOVE_FROM_CART } from "../actions/cartActions";
+import { ADD_ORDER } from "../actions/orderActions";
 import CartItem from "../../models/cart-item";
+import { DELETE_PRODUCT } from "../actions/productsActions";
 const initialState = {
   items: {},
   totalAmount: 0,
@@ -43,10 +45,25 @@ function cartReducer(state = initialState, action) {
       }
       return {
         ...state,
-        items: { ...updateItems },
+        items: updateItems,
         totalAmount: state.totalAmount - price,
       };
 
+    case ADD_ORDER:
+      return initialState;
+
+    case DELETE_PRODUCT:
+      if (!state.items[action.pid]) {
+        return state;
+      }
+      const newItems = { ...state.items };
+      const itemTotal = state.items[action.pid].sum;
+      delete newItems[action.pid];
+      return {
+        ...state,
+        items: newItems,
+        totalAmount: state.totalAmount - itemTotal,
+      };
     default:
       return state;
   }
