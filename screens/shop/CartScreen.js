@@ -1,12 +1,27 @@
 import { StyleSheet, Text, View, FlatList, Button } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { removeItem } from "../../store/actions/cartActions";
 import React from "react";
 import Colors from "../../constants/Colors";
+import CartItem from "../../components/shop/CartItem";
 
 const CartScreen = (props) => {
   const cartTotalAmount = useSelector((state) => state.cart.totalAmount);
-  const cartItems = useSelector((state) => Object.values(state.cart.items));
-  console.log(cartItems);
+  const cartItems = useSelector((state) => {
+    const itemsList = [];
+    for (const key in state.cart.items) {
+      itemsList.push({
+        productId: key,
+        productTitle: state.cart.items[key].productTitle,
+        productPrice: state.cart.items[key].productPrice,
+        quantity: state.cart.items[key].quantity,
+        sum: state.cart.items[key].sum,
+      });
+    }
+    return itemsList.sort((a, b) => (a.productId > b.productId ? 1 : -1));
+  });
+  const dispatch = useDispatch();
+
   return (
     <View style={styles.screen}>
       <View style={styles.summary}>
@@ -21,12 +36,22 @@ const CartScreen = (props) => {
       </View>
       <FlatList
         data={cartItems}
+        keyExtractor={(item) => item.productId}
         renderItem={(itemData) => (
-          <View>
-            <Text>{itemData.item.productTitle}</Text>
-            <Text>{itemData.item.quantity}</Text>
-            <Text>{itemData.item.sum.toFixed(2)}</Text>
-          </View>
+          <CartItem
+            quantity={itemData.item.quantity}
+            title={itemData.item.productTitle}
+            amount={itemData.item.sum}
+            onRemove={() => {
+              dispatch(
+                removeItem(
+                  itemData.item.productId,
+                  itemData.item.productPrice,
+                  itemData.item.quantity
+                )
+              );
+            }}
+          />
         )}
       />
     </View>

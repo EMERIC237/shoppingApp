@@ -1,4 +1,4 @@
-import { ADD_TO_CART } from "../actions/cartActions";
+import { ADD_TO_CART, REMOVE_FROM_CART } from "../actions/cartActions";
 import CartItem from "../../models/cart-item";
 const initialState = {
   items: {},
@@ -27,6 +27,24 @@ function cartReducer(state = initialState, action) {
         ...state,
         items: { ...state.items, [addedProduct.id]: toAdd },
         totalAmount: state.totalAmount + prodPrice,
+      };
+    case REMOVE_FROM_CART:
+      //We make a shallow copy of the cart, delete the items and replace the new value of the cart.item
+      const { id: pid, prodPrice: price, quantity: qtt } = action.payload;
+      let updateItems = { ...state.items };
+
+      if (qtt > 1) {
+        //we need to reduce it not erase
+        updateItems[pid].quantity = qtt - 1;
+        updateItems[pid].sum = updateItems[pid].sum - price;
+      } else {
+        //we erase the whole element
+        delete updateItems[pid];
+      }
+      return {
+        ...state,
+        items: { ...updateItems },
+        totalAmount: state.totalAmount - price,
       };
 
     default:
