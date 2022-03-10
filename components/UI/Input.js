@@ -9,7 +9,7 @@ const inputReducer = (state, action) => {
         ...state,
         value: action.value,
         isValid: action.isValid,
-      };e
+      };
     case INPUT_BLUR:
       return {
         ...state,
@@ -25,12 +25,12 @@ const Input = (props) => {
     isValid: props.initiallyValid,
     touched: false,
   });
-  const { onInputChange } = props;
+  const { onInputChange, id } = props;
   useEffect(() => {
     if (inputState.touched) {
-      onInputChange(inputState.value, inputState.isValid);
+      onInputChange(id, inputState.value, inputState.isValid);
     }
-  }, [inputState, onInputChange]);
+  }, [inputState, onInputChange, id]);
 
   const textChangeHandler = (text) => {
     const emailRegex =
@@ -64,8 +64,8 @@ const Input = (props) => {
         <TextInput
           {...props}
           style={styles.input}
-          value={inputState.value.title}
-          onChangeText={textChangeHandler.bind(this, "title")}
+          value={inputState.value}
+          onChangeText={textChangeHandler}
           onBlur={lostFocusHandler}
         />
       </View>
@@ -79,6 +79,10 @@ export default Input;
 const styles = StyleSheet.create({
   formControl: {
     width: "100%",
+  },
+  label: {
+    fontFamily: 'open-sans-bold',
+    marginVertical: 8
   },
   input: {
     paddingHorizontal: 2,

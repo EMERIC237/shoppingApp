@@ -112,30 +112,33 @@ const EditProductScreen = (props) => {
     <ScrollView>
       <View style={styles.form}>
         <Input
+          id="title"
           label="Title"
           errorText="Please enter a valid title!"
           keyboardType="default"
           autoCapitalize="sentences"
           autoCorrect
           returnKeyType="next"
-          onInputChange={inputChangeHandler.bind(this, "title")}
+          onInputChange={inputChangeHandler}
           initialValue={productToEdit ? productToEdit.title : ""}
           initiallyValid={!!productToEdit}
           required
         />
         <Input
-          label="image Url"
+          id="imageUrl"
+          label="Image Url"
           errorText="Please enter a valid image url!"
           keyboardType="default"
-          onInputChange={inputChangeHandler.bind(this, "imageUrl")}
+          onInputChange={inputChangeHandler}
           initialValue={productToEdit ? productToEdit.imageUrl : ""}
           initiallyValid={!!productToEdit}
           required
         />
         <Input
+          id="price"
           label="Price"
           errorText="Please enter a valid image price!"
-          onInputChange={inputChangeHandler.bind(this, "price")}
+          onInputChange={inputChangeHandler}
           editable={productToEdit ? false : true}
           keyboardType="decimal-pad"
           required
@@ -143,9 +146,10 @@ const EditProductScreen = (props) => {
         />
 
         <Input
+          id="description"
           label="Description"
           errorText="Please enter a valid Description!"
-          onInputChange={inputChangeHandler.bind(this, "description")}
+          onInputChange={inputChangeHandler}
           keyboardType="default"
           autoCapitalize="sentences"
           autoCorrect
@@ -184,10 +188,5 @@ export default EditProductScreen;
 const styles = StyleSheet.create({
   form: {
     margin: 20,
-  },
-
-  label: {
-    fontFamily: "open-sans-bold",
-    marginVertical: 8,
   },
 });
