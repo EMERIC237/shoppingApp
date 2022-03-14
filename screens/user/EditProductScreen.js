@@ -64,8 +64,6 @@ const EditProductScreen = (props) => {
       ]);
       return;
     }
-    console.log({ formState });
-
     if (productToEdit) {
       dispatch(
         updateProduct(

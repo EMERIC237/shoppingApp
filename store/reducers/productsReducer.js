@@ -17,6 +17,8 @@ function uid() {
   );
 }
 function productsReducer(state = initialState, action) {
+  console.log("before going through the reducer", state.userProducts);
+
   switch (action.type) {
     case DELETE_PRODUCT:
       return {
@@ -29,6 +31,8 @@ function productsReducer(state = initialState, action) {
         ),
       };
     case CREATE_PRODUCT:
+      console.log("before creating new product", state.userProducts);
+
       const { title, description, imageUrl, price } = action.payload;
       const newId = uid();
       const newProduct = new Product(
@@ -39,11 +43,12 @@ function productsReducer(state = initialState, action) {
         description,
         price
       );
+      console.log(state.userProducts);
       console.log({ newProduct });
       return {
         ...state,
-        availableProducts: [...state.availableProducts, newProduct],
-        userProducts: [...state.userProducts, newProduct],
+        availableProducts: state.availableProducts.concat(newProduct),
+        userProducts: state.userProducts.concat(newProduct),
       };
 
     case UPDATE_PRODUCT:
