@@ -11,6 +11,11 @@ import CartScreen from "../screens/shop/CartScreen";
 import OrdersScreen from "../screens/shop/OrdersScreen";
 import UserProductsSreen from "../screens/user/UserProductsSreen";
 import EditProductScreen from "../screens/user/EditProductScreen";
+/**
+ * default nagivator for all the screens of my app
+ *
+ * This will load all the information only the first time
+ */
 const defaultNavOptions = {
   headerStyle: {
     backgroundColor: Platform.OS === "android" ? Colors.primary : "",

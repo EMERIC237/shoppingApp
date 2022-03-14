@@ -3,6 +3,7 @@ import Product from "../../models/product";
 import {
   CREATE_PRODUCT,
   DELETE_PRODUCT,
+  SET_PRODUCTS,
   UPDATE_PRODUCT,
 } from "../actions/productsActions";
 const initialState = {
@@ -10,14 +11,13 @@ const initialState = {
   userProducts: PRODUCTS.filter((prod) => prod.ownerId === "u1"),
 };
 
-function uid() {
-  return (performance.now().toString(36) + Math.random().toString(36)).replace(
-    /\./g,
-    ""
-  );
-}
 function productsReducer(state = initialState, action) {
   switch (action.type) {
+    case SET_PRODUCTS:
+      return {
+        availableProducts: action.products,
+        userProducts: action.products.filter((prod) => prod.ownerId === "u1"),
+      };
     case DELETE_PRODUCT:
       return {
         ...state,
@@ -29,17 +29,17 @@ function productsReducer(state = initialState, action) {
         ),
       };
     case CREATE_PRODUCT:
-      const { title, description, imageUrl, price } = action.payload;
-      const newId = uid();
+      const { id, title, description, imageUrl, price } = action.payload;
+
       const newProduct = new Product(
-        newId,
+        id,
         "u1",
         title,
         imageUrl,
         description,
         price
       );
-      console.log({ newProduct });
+
       return {
         ...state,
         availableProducts: [...state.availableProducts, newProduct],
@@ -53,7 +53,6 @@ function productsReducer(state = initialState, action) {
         description: updatedDescription,
         imageUrl: updatedImageUrl,
       } = action.payload;
-      console.log(action.payload);
       const productIndex = state.userProducts.findIndex(
         (prod) => prod.id === prodId
       );
