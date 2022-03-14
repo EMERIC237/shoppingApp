@@ -9,6 +9,7 @@ import { deleteProduct } from "../../store/actions/productsActions";
 
 const UserProductsSreen = (props) => {
   const userProducts = useSelector((state) => state.products.userProducts);
+  console.table(userProducts);
   const dispatch = useDispatch();
   const editProductHandler = (id) => {
     props.navigation.navigate("EditProduct", { productId: id });

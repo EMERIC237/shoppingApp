@@ -1,16 +1,8 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TextInput,
-  Platform,
-  Alert,
-} from "react-native";
+import { StyleSheet, View, ScrollView, Platform, Alert } from "react-native";
 import Input from "../../components/UI/Input";
 import HeaderButton from "../../components/UI/HeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
-import React, { useState, useEffect, useCallback, useReducer } from "react";
+import React, { useEffect, useCallback, useReducer } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   createProduct,
@@ -18,29 +10,27 @@ import {
 } from "../../store/actions/productsActions";
 const FORM_UPDATE = "FORM_UPDATE";
 const formReducer = (state, action) => {
-  switch (action.type) {
-    case FORM_UPDATE:
-      const updatedValues = {
-        ...state.inputValues,
-        [action.input]: action.value,
-      };
-      const updatedValidities = {
-        ...state.inputValidities,
-        [action.input]: action.isValid,
-      };
-      let updatedFormIsValid = true;
-      for (const key in updatedValidities) {
-        updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-      }
-      return {
-        formIsValid: updatedFormIsValid,
-        inputValidities: updatedValidities,
-        inputValues: updatedValues,
-      };
+  if (action.type === FORM_UPDATE) {
+    const updatedValues = {
+      ...state.inputValues,
+      [action.input]: action.inputValue,
+    };
 
-    default:
-      return state;
+    const updatedValidities = {
+      ...state.inputValidities,
+      [action.input]: action.isValid,
+    };
+    let updatedFormIsValid = true;
+    for (const key in updatedValidities) {
+      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+    }
+    return {
+      formIsValid: updatedFormIsValid,
+      inputValidities: updatedValidities,
+      inputValues: updatedValues,
+    };
   }
+  return state;
 };
 
 const EditProductScreen = (props) => {
@@ -48,6 +38,7 @@ const EditProductScreen = (props) => {
   const productToEdit = useSelector((state) =>
     state.products.userProducts.find((prod) => (prod.id = prodId))
   );
+
   const dispatch = useDispatch();
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
@@ -73,23 +64,28 @@ const EditProductScreen = (props) => {
       ]);
       return;
     }
-    productToEdit
-      ? dispatch(
-          updateProduct(
-            prodId,
-            formState.inputValues.title,
-            formState.inputValues.description,
-            formState.inputValues.imageUrl
-          )
+    console.log({ formState });
+
+    if (productToEdit) {
+      dispatch(
+        updateProduct(
+          prodId,
+          formState.inputValues.title,
+          formState.inputValues.description,
+          formState.inputValues.imageUrl
         )
-      : dispatch(
-          createProduct(
-            formState.inputValues.title,
-            formState.inputValues.description,
-            formState.inputValues.imageUrl,
-            +formState.inputValues.price
-          )
-        );
+      );
+    } else {
+      dispatch(
+        createProduct(
+          formState.inputValues.title,
+          formState.inputValues.description,
+          formState.inputValues.imageUrl,
+          +formState.inputValues.price
+        )
+      );
+    }
+
     props.navigation.goBack();
   }, [dispatch, prodId, formState]);
 
@@ -101,7 +97,7 @@ const EditProductScreen = (props) => {
     (inputIdentifier, inputValue, inputValidity) => {
       dispatchFormState({
         type: FORM_UPDATE,
-        value: inputValue,
+        inputValue: inputValue,
         isValid: inputValidity,
         input: inputIdentifier,
       });
@@ -129,6 +125,7 @@ const EditProductScreen = (props) => {
           label="Image Url"
           errorText="Please enter a valid image url!"
           keyboardType="default"
+          returnKeyType="next"
           onInputChange={inputChangeHandler}
           initialValue={productToEdit ? productToEdit.imageUrl : ""}
           initiallyValid={!!productToEdit}
@@ -148,7 +145,7 @@ const EditProductScreen = (props) => {
         <Input
           id="description"
           label="Description"
-          errorText="Please enter a valid Description!"
+          errorText="Please enter a valid description!"
           onInputChange={inputChangeHandler}
           keyboardType="default"
           autoCapitalize="sentences"
