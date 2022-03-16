@@ -1,5 +1,12 @@
 import React from "react";
-import { StyleSheet, Button, FlatList, Platform, Alert } from "react-native";
+import {
+  StyleSheet,
+  Button,
+  FlatList,
+  Platform,
+  Alert,
+  View,
+} from "react-native";
 import Colors from "../../constants/Colors";
 import HeaderButton from "../../components/UI/HeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
@@ -30,6 +37,16 @@ const UserProductsSreen = (props) => {
       ]
     );
   };
+
+  if (userProducts.length === 0) {
+    return (
+      <View style={styles.noFound}>
+        <Text style={styles.message}>
+          No prducts found here!!!Maybe start creating some
+        </Text>
+      </View>
+    );
+  }
   return (
     <FlatList
       data={userProducts}
@@ -88,4 +105,13 @@ UserProductsSreen.navigationOptions = (navData) => {
 };
 export default UserProductsSreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  noFound: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  message: {
+    fontSize: 14,
+  },
+});

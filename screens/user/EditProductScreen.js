@@ -49,7 +49,6 @@ const EditProductScreen = (props) => {
   const productToEdit = useSelector((state) =>
     state.products.userProducts.find((prod) => (prod.id = prodId))
   );
-
   const dispatch = useDispatch();
 
   const [formState, dispatchFormState] = useReducer(formReducer, {

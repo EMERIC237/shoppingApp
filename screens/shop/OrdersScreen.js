@@ -39,6 +39,16 @@ const OrdersScreen = (props) => {
       </View>
     );
   }
+
+  if (orders.length === 0) {
+    return (
+      <View style={styles.noFound}>
+        <Text style={styles.message}>
+          There is no order for now!!!please start adding some
+        </Text>
+      </View>
+    );
+  }
   return (
     <FlatList
       data={orders}
@@ -75,5 +85,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flex: 1,
+  },
+  noFound: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  message: {
+    fontSize: 14,
   },
 });
