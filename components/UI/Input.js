@@ -29,6 +29,7 @@ const Input = (props) => {
 
   useEffect(() => {
     if (inputState.touched) {
+      console.log("OnInputChange is beeeinng exceuted here..................");
       onInputChange(id, inputState.value, inputState.isValid);
     }
   }, [inputState, onInputChange, id]);
@@ -67,7 +68,9 @@ const Input = (props) => {
           style={styles.input}
           value={inputState.value}
           onChangeText={textChangeHandler}
-          onBlur={lostFocusHandler}
+          // onBlur={lostFocusHandler}
+          onEndEditing={lostFocusHandler}
+          onSubmitEditing={lostFocusHandler}
         />
       </View>
       {!inputState.isValid && inputState.touched && (
