@@ -1,9 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-export const SIGNUP = "SIGNUP";
-export const LOGIN = "LOGIN";
+// export const SIGNUP = "SIGNUP";
+// export const LOGIN = "LOGIN";
 export const AUTHENTICATE = "AUTHENTICATE";
 
 export const LOGOUT = "LOGOUT";
+let timer;
 /**
  *Function to sign up on the app using hte email and password
  *
@@ -40,7 +41,13 @@ export const signup = (email, password) => {
       throw new Error(message);
     }
     const resData = await response.json();
-    dispatch(authenticate(resData.localId, resData.idToken));
+    dispatch(
+      authenticate(
+        resData.localId,
+        resData.idToken,
+        parseInt(resData.expiresIn) * 1000
+      )
+    );
     //check get the expiration date of the token
     const onExpiration = new Date(
       new Date().getTime() + parseInt(resData.expiresIn) * 1000
@@ -49,8 +56,19 @@ export const signup = (email, password) => {
   };
 };
 
-export const authenticate = (userId, token) => {
-  return { type: AUTHENTICATE, payload: { userId, token } };
+/**
+ * This function is use to authenticate(sign in on sign up )on the device
+ * The function will dispatch to action : the setLogoutTimer which will set a timer
+ * to expire the token after the expire date is passed
+ * @param {string} userId
+ * @param {string} token
+ * @returns an action object that will be used on the reducer function
+ */
+export const authenticate = (userId, token, expiryTime) => {
+  return (dispatch) => {
+    dispatch(setLogoutTimer(expiryTime));
+    dispatch({ type: AUTHENTICATE, payload: { userId, token } });
+  };
 };
 
 /**
@@ -91,7 +109,13 @@ export const login = (email, password) => {
     }
 
     const resData = await response.json();
-    dispatch(authenticate(resData.localId, resData.idToken));
+    dispatch(
+      authenticate(
+        resData.localId,
+        resData.idToken,
+        parseInt(resData.expiresIn) * 1000
+      )
+    );
 
     const onExpiration = new Date(
       new Date().getTime() + parseInt(resData.expiresIn) * 1000
@@ -114,11 +138,32 @@ const saveDataToStorage = (token, userId, onExpiration) => {
   );
 };
 
+const clearLogoutTimer = () => {
+  if (timer) {
+    clearTimeout(timer);
+  }
+};
+/**
+ *
+ * This function is use to setup a timer for the token
+ * @param {date object} expirationTime
+ * @returns a dispacth funtion
+ */
+const setLogoutTimer = (expirationTime) => {
+  return (dispatch) => {
+    timer = setTimeout(() => {
+      dispatch(logout());
+    }, expirationTime);
+  };
+};
+
 /**
  * function to logout of the device and delete the token
  * @name logout
  * @returns an action object
  */
 export const logout = () => {
+  clearLogoutTimer();
+  AsyncStorage.removeItem("userData");
   return { type: LOGOUT };
 };
