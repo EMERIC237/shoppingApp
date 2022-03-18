@@ -82,7 +82,7 @@ export const login = (email, password) => {
   console.log("trying to login here ......");
   return async (dispatch) => {
     const response = await fetch(
-      "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBSzD3_mNgj4OMIYz1KXzfw3-Z_YzxjBn4",
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.API_KEY}`,
       {
         method: "POST",
         headers: {
